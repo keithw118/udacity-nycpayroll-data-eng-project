@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "df-nycpayroll"
+		},
+		"ls_adls_nycpayroll_accountKey": {
+			"value": ""
+		},
+		"ls_sqldb_nycpayroll_connectionString": {
+			"value": ""
+		},
+		"ls_synapse_nycpayroll_connectionString": {
+			"value": ""
+		},
+		"ls_adls_nycpayroll_properties_typeProperties_url": {
+			"value": "https://stoacctnycpayrollkeithw.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
