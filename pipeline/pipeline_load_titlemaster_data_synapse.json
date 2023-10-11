@@ -1,5 +1,5 @@
 {
-	"name": "pipeline_load_titlemaster_data_synapse_copy1",
+	"name": "pipeline_load_titlemaster_data_synapse",
 	"properties": {
 		"activities": [
 			{
