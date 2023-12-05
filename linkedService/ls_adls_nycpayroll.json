@@ -1,0 +1,12 @@
+{
+	"name": "ls_adls_nycpayroll",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://stoacctnycpayrollkeithw.dfs.core.windows.net/",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEY3RDM1NDhBLTI5NTktNDEwMS04NDNDLTZDN0M5MDFGNkEzOV80YWVlNTk2YS1kNjllLTRjMmEtODk4Zi0yMzU2YTM1MDE0MGIiDQp9"
+		}
+	}
+}

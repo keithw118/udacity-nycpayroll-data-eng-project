@@ -1,0 +1,130 @@
+{
+	"name": "df_aggregate_data",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dataset_sqldb_2021_payroll",
+						"type": "DatasetReference"
+					},
+					"name": "sourcedatasetsqldb2021payroll"
+				},
+				{
+					"dataset": {
+						"referenceName": "dataset_adls_2020_payroll",
+						"type": "DatasetReference"
+					},
+					"name": "sourcedatasetadls2020payroll"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dataset_synapse_nycpayroll_summary",
+						"type": "DatasetReference"
+					},
+					"name": "sinkdatasetsynapsesummarypayroll"
+				}
+			],
+			"transformations": [
+				{
+					"name": "unioncurrentandhistoricalpayroll"
+				},
+				{
+					"name": "FiscalYear"
+				},
+				{
+					"name": "TotalPaid"
+				},
+				{
+					"name": "aggregatepayrolldata"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     df_param_fiscal_year as integer (2021)",
+				"}",
+				"source(output(",
+				"          FiscalYear as integer,",
+				"          PayrollNumber as integer,",
+				"          AgencyID as short,",
+				"          AgencyName as string,",
+				"          EmployeeID as integer,",
+				"          LastName as string,",
+				"          FirstName as string,",
+				"          AgencyStartDate as date,",
+				"          WorkLocationBorough as string,",
+				"          TitleCode as integer,",
+				"          TitleDescription as string,",
+				"          LeaveStatusasofJune30 as string,",
+				"          BaseSalary as double,",
+				"          PayBasis as string,",
+				"          RegularHours as double,",
+				"          RegularGrossPaid as double,",
+				"          OTHours as double,",
+				"          TotalOTPaid as double,",
+				"          TotalOtherPay as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> sourcedatasetsqldb2021payroll",
+				"source(output(",
+				"          FiscalYear as short,",
+				"          PayrollNumber as short,",
+				"          AgencyID as short,",
+				"          AgencyName as string,",
+				"          EmployeeID as integer,",
+				"          LastName as string,",
+				"          FirstName as string,",
+				"          AgencyStartDate as date 'MM/dd/yyyy',",
+				"          WorkLocationBorough as string,",
+				"          TitleCode as integer,",
+				"          TitleDescription as string,",
+				"          LeaveStatusasofJune30 as string,",
+				"          BaseSalary as double,",
+				"          PayBasis as string,",
+				"          RegularHours as double,",
+				"          RegularGrossPaid as double,",
+				"          OTHours as double,",
+				"          TotalOTPaid as double,",
+				"          TotalOtherPay as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> sourcedatasetadls2020payroll",
+				"sourcedatasetsqldb2021payroll, sourcedatasetadls2020payroll union(byName: true)~> unioncurrentandhistoricalpayroll",
+				"unioncurrentandhistoricalpayroll filter(toInteger(FiscalYear) >= $df_param_fiscal_year) ~> FiscalYear",
+				"FiscalYear derive(TotalPaid = RegularGrossPaid+TotalOTPaid+TotalOtherPay) ~> TotalPaid",
+				"TotalPaid aggregate(groupBy(AgencyName,",
+				"          FiscalYear),",
+				"     TotalPaid = round(sum(RegularGrossPaid+TotalOTPaid+TotalOtherPay),2)) ~> aggregatepayrolldata",
+				"aggregatepayrolldata sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          FiscalYear as integer,",
+				"          AgencyName as string,",
+				"          TotalPaid as double",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     staged: true,",
+				"     allowCopyCommand: true,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          FiscalYear,",
+				"          AgencyName,",
+				"          TotalPaid",
+				"     )) ~> sinkdatasetsynapsesummarypayroll"
+			]
+		}
+	}
+}
