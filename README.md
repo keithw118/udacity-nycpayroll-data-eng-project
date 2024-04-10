@@ -1,4 +1,4 @@
-Summary of Azure Databricks Project: 
+Summary of Data Lakehouse/Azure Databricks Project: 
 
 The goal of this project was to develop a data lake solution using Azure Databricks using a lake house architecture. I accomplished the following:
 
